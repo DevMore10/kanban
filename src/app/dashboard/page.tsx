@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div>TaskFlow</div>;
+  return <div>Home</div>;
 }
