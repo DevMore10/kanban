@@ -1,104 +1,99 @@
 "use client";
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../components/ui/sidebar";
-import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
-  IconPlus,
-  IconFolder,
-} from "@tabler/icons-react";
+import { IconLayout, IconLayoutDashboard, IconPlus, IconFolder } from "@tabler/icons-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useQuery } from "convex/react";
+import { OrganizationSwitcher, UserButton, useAuth, useOrganization, useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { CreateProjectModal } from "./modals/create-new-project";
+import { api } from "../../convex/_generated/api";
+import { FilesIcon } from "lucide-react";
 
 export function SideNav() {
-  const navigationLinks = [
-    {
-      label: "Dashboard",
-      href: "#",
-      icon: (
-        <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
-      label: "Profile",
-      href: "#",
-      icon: (
-        <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
-      label: "Settings",
-      href: "#",
-      icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-  ];
+  const pathname = usePathname();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Project state with initial sample projects
-  const [projects, setProjects] = useState([
-    { id: 1, title: "Website Redesign" },
-    { id: 2, title: "Mobile App" },
-    { id: 3, title: "Marketing Campaign" },
-  ]);
+  // Get the current organization and user from Clerk
+  const organization = useOrganization();
+  const user = useUser();
 
-  // Function to add a new project
-  const addProject = () => {
-    const newId = projects.length > 0 ? Math.max(...projects.map((project) => project.id)) + 1 : 1;
-    const newProject = { id: newId, title: `Project ${newId}` };
-    setProjects([...projects, newProject]);
-  };
+  // Set orgId to organization ID if available, otherwise fall back to user ID
+  let orgId: string | undefined = undefined;
+  if (organization.isLoaded && user.isLoaded) {
+    orgId = organization.organization?.id ?? user.user?.id;
+  }
 
-  const [open, setOpen] = useState(false);
+  // Fetch projects from Convex using the organization ID or user ID as fallback
+  const projects = useQuery(api.projects.getProjects, orgId ? { orgId } : "skip");
 
   return (
-    <div
-      className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 max-w-7xl mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-screen"
-      )}>
-      <Sidebar
-        open={open}
-        setOpen={setOpen}
-        animate={false}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <>
-              <Logo />
-            </>
+    <div className="flex flex-col bg-gray-50 dark:bg-neutral-800 h-screen border-r border-neutral-200 dark:border-neutral-700">
+      <CreateProjectModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        orgId={orgId}
+      />
 
+      <Sidebar
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
+        animate={true}>
+        <SidebarBody className="flex flex-col h-full">
+          {/* Logo Section */}
+          <div className={cn("py-4", sidebarOpen ? "px-4" : "px-0 flex justify-center")}>
+            {sidebarOpen ? <Logo /> : <LogoIcon />}
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             {/* Projects Section */}
-            <div className="mt-8">
-              <div className="flex justify-between items-center mb-2 px-3">
-                <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                  Projects
-                </h3>
+            <div className={cn("mt-2 mb-4", sidebarOpen ? "px-4" : "px-0")}>
+              {/* Projects Header */}
+              <div
+                className={cn(
+                  "flex items-center mb-2",
+                  sidebarOpen ? "justify-between px-0" : "justify-center"
+                )}>
+                {sidebarOpen && (
+                  <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                    PROJECTS
+                  </h3>
+                )}
                 <button
-                  onClick={addProject}
-                  className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className={cn(
+                    "p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors",
+                    !sidebarOpen && "mx-auto"
+                  )}
                   aria-label="Add new project">
                   <IconPlus className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-1">
-                {projects.map((project) => (
+              {/* Projects List */}
+              <div className={cn("flex flex-col gap-1", !sidebarOpen && "items-center")}>
+                <SidebarLink
+                  active={pathname === "/dashboard"}
+                  link={{
+                    label: "Dashboard",
+                    href: "/dashboard",
+                    icon: (
+                      <IconLayoutDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                    ),
+                  }}
+                />
+
+                {projects?.map((project) => (
                   <SidebarLink
-                    key={project.id}
+                    key={project._id}
+                    active={pathname.includes(`/dashboard/${project._id}`)}
                     link={{
-                      label: project.title,
-                      href: `#project-${project.id}`,
+                      label: project.name,
+                      href: `/dashboard/${project._id}`,
                       icon: (
                         <IconFolder className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
                       ),
@@ -107,31 +102,20 @@ export function SideNav() {
                 ))}
               </div>
             </div>
-
-            {/* Navigation Links */}
-            <div className="mt-8 pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
-              {navigationLinks.map((link, idx) => (
-                <SidebarLink
-                  key={idx}
-                  link={link}
-                />
-              ))}
-            </div>
           </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Manu Arora",
-                href: "#",
-                icon: (
-                  <Image
-                    src="/logo.svg"
-                    className="h-7 w-7 flex-shrink-0"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
-                ),
+
+          {/* User Button */}
+          <div
+            className={cn(
+              "border-t border-neutral-200 dark:border-neutral-700",
+              sidebarOpen ? "p-4" : "py-4 flex justify-center"
+            )}>
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonTrigger: "dark:text-white",
+                },
               }}
             />
           </div>
@@ -141,11 +125,14 @@ export function SideNav() {
   );
 }
 
+// Logo components
 export const Logo = () => {
   return (
     <Link
       href="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
+      <FilesIcon />
+
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -160,8 +147,9 @@ export const LogoIcon = () => {
   return (
     <Link
       href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      className="flex justify-center items-center text-sm text-black py-1 relative z-20">
+      <FilesIcon />
+      {/* <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" /> */}
     </Link>
   );
 };

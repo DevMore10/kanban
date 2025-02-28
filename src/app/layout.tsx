@@ -5,7 +5,7 @@ import { ConvexClientProvider } from "./ConvexClientProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Header } from "@/components/header";
+import { Header } from "@/_components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,18 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        baseTheme: neobrutalism,
-      }}>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <ConvexClientProvider>
-            <Header />
-            {children}
-          </ConvexClientProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    // <ClerkProvider
+    //   appearance={{
+    //     baseTheme: neobrutalism,
+    //   }}>
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ConvexClientProvider>
+          <Header />
+          {children}
+        </ConvexClientProvider>
+      </body>
+    </html>
+    // </ClerkProvider>
   );
 }

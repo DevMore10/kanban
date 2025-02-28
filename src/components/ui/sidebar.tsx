@@ -151,17 +151,23 @@ export const MobileSidebar = ({ className, children, ...props }: React.Component
 export const SidebarLink = ({
   link,
   className,
+  active,
   ...props
 }: {
   link: Links;
   className?: string;
+  active?: boolean;
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
   return (
     <Link
       href={link.href}
-      className={cn("flex items-center justify-start gap-2  group/sidebar py-2", className)}
+      className={cn(
+        "flex items-center justify-start gap-2 group/sidebar py-2",
+        active ? "bg-neutral-200 dark:bg-neutral-700 rounded-md px-2" : "px-2",
+        className
+      )}
       {...props}>
       {link.icon}
 

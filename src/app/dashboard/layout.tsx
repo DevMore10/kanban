@@ -6,7 +6,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
       <div>
         <SideNav />
       </div>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 p-10">{children}</div>
     </div>
   );
 }
