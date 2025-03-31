@@ -221,7 +221,7 @@ export function KanbanBoard({ projectId }: { projectId: Id<"projects"> }) {
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 h-full">
+      <div className="flex gap-4 h-full justify-center">
         <SortableContext
           items={["todo", "doing", "completed"]}
           strategy={verticalListSortingStrategy}>

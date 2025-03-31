@@ -27,6 +27,7 @@ export function SideNav() {
     orgId = organization.organization?.id ?? user.user?.id;
   }
 
+
   // Fetch projects from Convex using the organization ID or user ID as fallback
   const projects = useQuery(api.projects.getProjects, orgId ? { orgId } : "skip");
 
@@ -60,7 +61,7 @@ export function SideNav() {
                 )}>
                 {sidebarOpen && (
                   <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                    PROJECTS
+                    New Project
                   </h3>
                 )}
                 <button
@@ -110,11 +111,11 @@ export function SideNav() {
               "border-t border-neutral-200 dark:border-neutral-700",
               sidebarOpen ? "p-4" : "py-4 flex justify-center"
             )}>
-            <UserButton
-              afterSignOutUrl="/"
+            <UserButton 
               appearance={{
                 elements: {
                   userButtonTrigger: "dark:text-white",
+                  userButtonAvatarBox: "h-10 w-10",
                 },
               }}
             />

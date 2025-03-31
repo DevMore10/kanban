@@ -17,12 +17,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { api } from "../../../convex/_generated/api";
 
-export function CreateProjectModal({ 
-  isOpen, 
+export function CreateProjectModal({
+  isOpen,
   onClose,
   orgId,
-}: { 
-  isOpen: boolean; 
+}: {
+  isOpen: boolean;
   onClose: () => void;
   orgId?: string;
 }) {
@@ -30,23 +30,23 @@ export function CreateProjectModal({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const createProject = useMutation(api.projects.createProject);
-  
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!name.trim()) return;
-    
+
     setIsLoading(true);
-    
+
     try {
       const projectId = await createProject({
         name,
         description: description || undefined,
         orgId,
       });
-      
+
       // Redirect to the new project
       router.push(`/dashboard/${projectId}`);
       onClose();
@@ -56,14 +56,16 @@ export function CreateProjectModal({
       setIsLoading(false);
     }
   }
-  
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new project</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -76,7 +78,7 @@ export function CreateProjectModal({
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="description">Description (optional)</Label>
               <Textarea
@@ -88,14 +90,19 @@ export function CreateProjectModal({
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading || !name.trim()}>
+            <Button
+              type="submit"
+              disabled={isLoading || !name.trim()}>
               {isLoading ? "Creating..." : "Create Project"}
             </Button>
           </DialogFooter>

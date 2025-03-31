@@ -4,20 +4,21 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Id } from "../../../convex/_generated/dataModel";
 import { TaskCard } from "./task.card";
+import { GripVertical } from "lucide-react";
 
 type Task = {
-  _id: Id<"tasks">; // Document ID from Convex
+  _id: Id<"tasks">;
   title: string;
   description?: string;
   status: "todo" | "doing" | "completed";
   order: number;
-  projectId: Id<"projects">; // Reference to project document
-  createdBy: string; // User ID
-  assignedTo?: string; // Optional user ID
-  createdAt: number; // Timestamp
-  updatedAt: number; // Timestamp
-  dueDate?: number; // Optional timestamp
-  tags?: string[]; // Optional array of tags
+  projectId: Id<"projects">;
+  createdBy: string;
+  assignedTo?: string;
+  createdAt: number;
+  updatedAt: number;
+  dueDate?: number;
+  tags?: string[];
 };
 
 export function SortableTaskCard({ task }: { task: Task }) {
@@ -34,8 +35,13 @@ export function SortableTaskCard({ task }: { task: Task }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}>
+      className="relative">
+      <div
+        className="absolute top-3 right-3 p-1 cursor-grab rounded hover:bg-gray-100 z-10"
+        {...attributes}
+        {...listeners}>
+        <GripVertical className="h-4 w-4 text-gray-400" />
+      </div>
       <TaskCard task={task} />
     </div>
   );

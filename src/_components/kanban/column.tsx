@@ -5,6 +5,9 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Id } from "../../../convex/_generated/dataModel";
 import { SortableTaskCard } from "./sortable-task-card";
 import { AddTaskButton } from "./add-task-button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Task = {
   _id: Id<"tasks">; // Document ID from Convex
@@ -35,33 +38,42 @@ export function KanbanColumn({
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
-      className="bg-gray-100 rounded-lg p-4 w-80 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-gray-700">{title}</h3>
-        <span className="bg-gray-200 text-gray-600 rounded-full px-2 py-1 text-xs">
+      className="w-80 flex flex-col h-full">
+      <CardHeader className="flex flex-row justify-between items-center p-4">
+        <CardTitle className="font-semibold text-gray-700">{title}</CardTitle>
+        <Badge
+          variant="default"
+          className="bg-gray-200 text-gray-600 rounded-full px-2 py-1 text-xs">
           {tasks.length}
-        </span>
-      </div>
+        </Badge>
+      </CardHeader>
 
-      <div className="flex-1 overflow-y-auto">
-        <SortableContext
-          items={tasks.map((t) => t._id)}
-          strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <SortableTaskCard
-              key={task._id}
-              task={task}
-            />
-          ))}
-        </SortableContext>
-      </div>
+      <CardContent className="flex-1 p-4">
+        <ScrollArea className="h-full">
+          <SortableContext
+            items={tasks.map((t) => t._id)}
+            strategy={verticalListSortingStrategy}>
+            {tasks.map((task) => (
+              <SortableTaskCard
+                key={task._id}
+                task={task}
+              />
+            ))}
+          </SortableContext>
+        </ScrollArea>
+      </CardContent>
 
-      <AddTaskButton
-        projectId={projectId}
-        status={id as "todo" | "doing" | "completed"}
-      />
-    </div>
+      {/* Conditionally render the AddTaskButton only for the "todo" column */}
+      {id === "todo" && (
+        <div className="p-4">
+          <AddTaskButton
+            projectId={projectId}
+            status={id as "todo" | "doing" | "completed"}
+          />
+        </div>
+      )}
+    </Card>
   );
 }

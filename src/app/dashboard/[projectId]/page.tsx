@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BirdIcon, ListIcon } from "lucide-react";
+import { BirdIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -18,7 +18,11 @@ export default function ProjectPage() {
   const tasks = useQuery(api.tasks.getTasks, { projectId });
 
   if (!project) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="animate-spin h-40 w-40 text-gray-400" />
+      </div>
+    );
   }
 
   // Count tasks by status
@@ -87,25 +91,27 @@ export default function ProjectPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Progress</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Progress</span>
-              <span>{completionRate}%</span>
+      <div className="mt-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Project Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progress</span>
+                <span>{completionRate}%</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full"
+                  style={{ width: `${completionRate}%` }}
+                />
+              </div>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-green-500 rounded-full"
-                style={{ width: `${completionRate}%` }}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
