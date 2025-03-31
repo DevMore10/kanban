@@ -30,6 +30,7 @@
     "convex": "^1.19.2",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.4.7",
+    "groq-sdk": "^0.17.0",
     "lucide-react": "^0.476.0",
     "motion": "^12.4.7",
     "next": "15.1.7",

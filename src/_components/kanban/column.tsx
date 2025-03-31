@@ -40,7 +40,7 @@ export function KanbanColumn({
   return (
     <Card
       ref={setNodeRef}
-      className="w-80 flex flex-col h-full">
+      className="w-full flex flex-col h-full">
       <CardHeader className="flex flex-row justify-between items-center p-4">
         <CardTitle className="font-semibold text-gray-700">{title}</CardTitle>
         <Badge

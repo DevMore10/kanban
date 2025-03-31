@@ -23,6 +23,7 @@ import { api } from "../../../convex/_generated/api";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { KanbanColumn } from "./column";
 import { TaskCard } from "./task.card";
+import { TaskGenerator } from "./task-generator"; // Import the modal component
 
 type Task = {
   _id: Id<"tasks">; // Document ID from Convex
@@ -215,38 +216,48 @@ export function KanbanBoard({ projectId }: { projectId: Id<"projects"> }) {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 h-full justify-center">
-        <SortableContext
-          items={["todo", "doing", "completed"]}
-          strategy={verticalListSortingStrategy}>
-          <KanbanColumn
-            id="todo"
-            title="To Do"
-            tasks={columns.todo}
-            projectId={projectId}
-          />
-          <KanbanColumn
-            id="doing"
-            title="In Progress"
-            tasks={columns.doing}
-            projectId={projectId}
-          />
-          <KanbanColumn
-            id="completed"
-            title="Completed"
-            tasks={columns.completed}
-            projectId={projectId}
-          />
-        </SortableContext>
+    <div className="flex flex-col w-full">
+      {/* Header with the task generator button that opens the modal */}
+      <div className="flex justify-between items-baseline mb-2">
+        <h2 className="text-xl font-bold py-2">Kanban Board</h2>
+        <div className="py-1">
+          <TaskGenerator projectId={projectId} />
+        </div>
       </div>
 
-      <DragOverlay>{activeTask ? <TaskCard task={activeTask} /> : null}</DragOverlay>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}>
+        <div className="flex gap-4 h-full justify-center">
+          <SortableContext
+            items={["todo", "doing", "completed"]}
+            strategy={verticalListSortingStrategy}>
+            <KanbanColumn
+              id="todo"
+              title="To Do"
+              tasks={columns.todo}
+              projectId={projectId}
+            />
+            <KanbanColumn
+              id="doing"
+              title="In Progress"
+              tasks={columns.doing}
+              projectId={projectId}
+            />
+            <KanbanColumn
+              id="completed"
+              title="Completed"
+              tasks={columns.completed}
+              projectId={projectId}
+            />
+          </SortableContext>
+        </div>
+
+        <DragOverlay>{activeTask ? <TaskCard task={activeTask} /> : null}</DragOverlay>
+      </DndContext>
+    </div>
   );
 }

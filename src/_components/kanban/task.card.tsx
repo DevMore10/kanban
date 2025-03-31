@@ -72,6 +72,7 @@ export function TaskCard({ task }: { task: Task }) {
   // Convex mutations
   const updateTask = useMutation(api.tasks.updateTask);
   const deleteTask = useMutation(api.tasks.deleteTask);
+  
 
   // Form setup for editing
   const form = useForm<FormValues>({

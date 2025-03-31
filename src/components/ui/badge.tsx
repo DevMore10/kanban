@@ -11,6 +11,7 @@ const badgeVariants = cva(
       variant: {
         default: "bg-main text-mtext",
         neutral: "bg-bw text-text",
+        outline: "bg-main text-mtext border-2 border-border",
       },
     },
     defaultVariants: {
